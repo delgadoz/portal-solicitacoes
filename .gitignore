@@ -1,0 +1,22 @@
+# Dependências
+vendor/
+node_modules/
+
+# Ambiente
+.env
+.env.*
+!.env.example
+
+# Testes e cache
+.phpunit.result.cache
+.phpunit.cache/
+coverage/
+
+# Logs
+*.log
+
+# IDE / sistema operacional
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
