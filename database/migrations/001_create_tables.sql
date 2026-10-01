@@ -36,7 +36,7 @@ CREATE TABLE solicitacoes (
         DEFAULT CURRENT_TIMESTAMP
         ON UPDATE CURRENT_TIMESTAMP,
     concluido_em DATETIME NULL,
-    CREATE INDEX idx_solicitacoes_criado_em,
+    INDEX idx_solicitacoes_criado_em (criado_em),
 
     CONSTRAINT fk_solicitacoes_categoria
         FOREIGN KEY (categoria_id) REFERENCES categorias(id)
