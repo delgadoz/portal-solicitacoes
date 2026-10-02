@@ -35,3 +35,17 @@
 - **Senhas do seed já em hash bcrypt.** Nem os dados de demonstração guardam senha em texto puro; a credencial de teste fica documentada no README.
 - **Seed de solicitações com ids explícitos e histórico coerente.** Garante que as linhas do histórico apontem para as solicitações certas e que os dados respeitem as regras de status e SLA.
 - **Dados de demonstração cobrindo todos os cenários.** Os três status, solicitações dentro e fora do SLA e os dois solicitantes, para demonstrar filtros, indicadores e isolamento entre usuários.
+
+## Fase 2 — Autenticação
+
+- **Sessão PHP em vez de JWT.** Frontend e API no mesmo domínio; sessão é simples, revogável no logout e não expõe token ao JavaScript. JWT faria sentido com vários clientes ou serviços.
+- **Cookie HttpOnly + SameSite=Strict.** HttpOnly impede leitura via JavaScript (mitiga roubo por XSS); SameSite=Strict impede envio a partir de outros sites (mitiga CSRF).
+- **`session_regenerate_id(true)` no login.** Impede fixação de sessão; `use_strict_mode` rejeita IDs não criados pelo servidor.
+- **Expiração por inatividade (30 min, configurável).**
+- **Token CSRF em métodos de escrita, comparado com `hash_equals`.** Segunda camada além do SameSite; comparação em tempo constante.
+- **Rate limiting por usuário + IP antes de conferir a senha.** Um atacante bloqueado não consegue mais testar senhas; limites configuráveis no `.env`.
+- **Mensagem única "Usuário ou senha inválidos" e hash fictício.** Não revela se o usuário existe, nem pela mensagem nem pelo tempo de resposta.
+- **Middleware como decorator (`Auth::protect`).** Envolve o handler da rota; login, CSRF e perfil ficam em um só lugar, e a rota declara o que exige.
+- **Perfil como enum do PHP 8.2.** Valores possíveis garantidos pela linguagem, sem strings soltas no código.
+- **Arquitetura em camadas: Controller → Service → Repository.** Controller valida entrada e responde; Service tem a regra; Repository tem o SQL.
+- **Cabeçalhos de segurança e remoção do `X-Powered-By`.**
