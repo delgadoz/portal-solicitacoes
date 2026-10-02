@@ -28,6 +28,7 @@
     "scripts": {
         "test": "phpunit",
         "lint": "phpcs",
-        "lint:fix": "phpcbf"
+        "lint:fix": "phpcbf",
+		"serve": "php -S localhost:8080 -t public public/index.php"
     }
 }
