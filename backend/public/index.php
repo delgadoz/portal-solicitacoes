@@ -15,6 +15,13 @@ $dotenv->required(['DB_HOST', 'DB_NAME', 'DB_USER', 'DB_PASS']);
 
 date_default_timezone_set($_ENV['APP_TIMEZONE'] ?? 'America/Fortaleza');
 
+// Cabeçalhos de segurança em todas as respostas
+header_remove('X-Powered-By');                 // não revela a versão do PHP
+header('X-Content-Type-Options: nosniff');     // navegador respeita o Content-Type informado
+header('X-Frame-Options: DENY');               // impede carregar a API dentro de iframes (clickjacking)
+header('Referrer-Policy: no-referrer');
+header("Content-Security-Policy: default-src 'none'; frame-ancestors 'none'");
+
 ErrorHandler::register();
 
 $router = new Router();
