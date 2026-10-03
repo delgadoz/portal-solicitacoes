@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Validators\FiltrosSolicitacao;
+use DateTimeImmutable;
 use PDO;
 
 final class SolicitacaoRepository
@@ -30,24 +32,77 @@ final class SolicitacaoRepository
     }
 
     /**
-     * @param int|null $solicitanteId quando informado, lista só as solicitações desse solicitante
+     * Lista com filtros, ordenação e paginação.
+     *
+     * @param int|null $solicitanteId quando informado, restringe às solicitações desse solicitante
+     *                                (aplicado sempre que o usuário logado for solicitante)
+     * @return array{itens: array, total: int}
      */
-    public function listar(?int $solicitanteId = null): array
+    public function listar(FiltrosSolicitacao $filtros, ?int $solicitanteId = null): array
     {
-        $sql = self::SELECT_BASE;
+        $condicoes = [];
         $params = [];
 
         if ($solicitanteId !== null) {
-            $sql .= ' WHERE s.solicitante_id = :solicitante_id';
+            $condicoes[] = 's.solicitante_id = :solicitante_id';
             $params['solicitante_id'] = $solicitanteId;
+        } elseif ($filtros->solicitanteId !== null) {
+            $condicoes[] = 's.solicitante_id = :solicitante_id';
+            $params['solicitante_id'] = $filtros->solicitanteId;
         }
 
-        $sql .= ' ORDER BY s.criado_em DESC, s.id DESC';
+        if ($filtros->dataInicio !== null) {
+            $condicoes[] = 's.criado_em >= :data_inicio';
+            $params['data_inicio'] = $filtros->dataInicio . ' 00:00:00';
+        }
 
-        $stmt = $this->pdo->prepare($sql);
+        if ($filtros->dataFim !== null) {
+            // "< dia seguinte" inclui o dia inteiro e mantém o uso do índice em criado_em
+            $condicoes[] = 's.criado_em < :data_fim';
+            $params['data_fim'] = (new DateTimeImmutable($filtros->dataFim))->modify('+1 day')->format('Y-m-d');
+        }
+
+        if ($filtros->categoriaId !== null) {
+            $condicoes[] = 's.categoria_id = :categoria_id';
+            $params['categoria_id'] = $filtros->categoriaId;
+        }
+
+        if ($filtros->statusId !== null) {
+            $condicoes[] = 's.status_id = :status_id';
+            $params['status_id'] = $filtros->statusId;
+        }
+
+        if ($filtros->busca !== null) {
+            // Escapa % e _ digitados pelo usuário, para serem buscados como texto e não como curinga
+            $condicoes[] = "s.titulo LIKE :busca ESCAPE '!'";
+            $params['busca'] = '%' . str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $filtros->busca) . '%';
+        }
+
+        $where = $condicoes === [] ? '' : ' WHERE ' . implode(' AND ', $condicoes);
+
+        // Total para a paginação (mesmos filtros, sem LIMIT)
+        $stmt = $this->pdo->prepare(
+            'SELECT COUNT(*) FROM solicitacoes s' . $where
+        );
         $stmt->execute($params);
+        $total = (int) $stmt->fetchColumn();
 
-        return $stmt->fetchAll();
+        // Coluna e direção vêm de listas fixas (FiltrosSolicitacao::ORDENACOES e asc/desc)
+        $coluna = FiltrosSolicitacao::ORDENACOES[$filtros->ordenarPor];
+        $direcao = $filtros->direcao === 'asc' ? 'ASC' : 'DESC';
+
+        $stmt = $this->pdo->prepare(
+            self::SELECT_BASE . $where . " ORDER BY {$coluna} {$direcao}, s.id {$direcao} LIMIT :limite OFFSET :offset"
+        );
+
+        foreach ($params as $nome => $valor) {
+            $stmt->bindValue($nome, $valor);
+        }
+        $stmt->bindValue('limite', $filtros->porPagina, PDO::PARAM_INT);
+        $stmt->bindValue('offset', $filtros->offset(), PDO::PARAM_INT);
+        $stmt->execute();
+
+        return ['itens' => $stmt->fetchAll(), 'total' => $total];
     }
 
     /**

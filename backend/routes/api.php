@@ -37,7 +37,7 @@ $router->get('/api/categorias', Auth::protect(
 
 // Solicitações: visibilidade e permissões por perfil são aplicadas no SolicitacaoService
 $router->get('/api/solicitacoes', Auth::protect(
-    fn (Request $r, array $p, UsuarioAutenticado $u) => SolicitacaoController::criar()->index($u)
+    fn (Request $r, array $p, UsuarioAutenticado $u) => SolicitacaoController::criar()->index($r, $u)
 ));
 
 $router->post('/api/solicitacoes', Auth::protect(

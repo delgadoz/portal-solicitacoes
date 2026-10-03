@@ -12,6 +12,7 @@ use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidationException;
 use App\Repositories\HistoricoRepository;
 use App\Repositories\SolicitacaoRepository;
+use App\Validators\FiltrosSolicitacao;
 use App\Validators\SolicitacaoValidator;
 use PDO;
 use Throwable;
@@ -28,9 +29,23 @@ final class SolicitacaoService
     ) {
     }
 
-    public function listar(UsuarioAutenticado $usuario): array
+    /**
+     * @return array{itens: array, meta: array{page: int, per_page: int, total: int, total_pages: int}}
+     */
+    public function listar(FiltrosSolicitacao $filtros, UsuarioAutenticado $usuario): array
     {
-        return $this->solicitacoes->listar($this->filtroDeDono($usuario));
+        // Para o solicitante, o filtro de dono é sempre ele mesmo, ignorando qualquer solicitante_id enviado
+        $resultado = $this->solicitacoes->listar($filtros, $this->filtroDeDono($usuario));
+
+        return [
+            'itens' => $resultado['itens'],
+            'meta' => [
+                'page' => $filtros->pagina,
+                'per_page' => $filtros->porPagina,
+                'total' => $resultado['total'],
+                'total_pages' => (int) ceil($resultado['total'] / $filtros->porPagina),
+            ],
+        ];
     }
 
     /**
