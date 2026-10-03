@@ -105,6 +105,34 @@ final class SolicitacaoRepository
         ]);
     }
 
+    /**
+     * Muda o status somente se ele ainda for $statusAtual (controle otimista de concorrência).
+     * Retorna false quando outra pessoa alterou a solicitação antes.
+     */
+    public function mudarStatus(int $id, int $statusAtual, int $statusNovo, int $atendenteId, bool $concluir): bool
+    {
+        $sql = 'UPDATE solicitacoes
+                   SET status_id = :status_novo,
+                       atendente_id = COALESCE(atendente_id, :atendente_id)';
+
+        if ($concluir) {
+            $sql .= ', concluido_em = NOW()';
+        }
+
+        // O "AND status_id = :status_atual" é o controle otimista: só altera se ninguém mudou antes
+        $sql .= ' WHERE id = :id AND status_id = :status_atual';
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            'id' => $id,
+            'status_atual' => $statusAtual,
+            'status_novo' => $statusNovo,
+            'atendente_id' => $atendenteId,
+        ]);
+
+        return $stmt->rowCount() === 1;
+    }
+
     public function excluir(int $id): void
     {
         // O histórico é removido junto pelo ON DELETE CASCADE
