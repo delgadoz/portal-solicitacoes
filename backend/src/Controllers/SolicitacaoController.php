@@ -13,6 +13,7 @@ use App\Repositories\CategoriaRepository;
 use App\Repositories\HistoricoRepository;
 use App\Repositories\SolicitacaoRepository;
 use App\Services\SolicitacaoService;
+use App\Validators\FiltrosSolicitacao;
 use App\Validators\SolicitacaoValidator;
 
 final class SolicitacaoController
@@ -33,9 +34,10 @@ final class SolicitacaoController
         ));
     }
 
-    public function index(UsuarioAutenticado $usuario): never
+    public function index(Request $request, UsuarioAutenticado $usuario): never
     {
-        Response::success($this->service->listar($usuario));
+        $resultado = $this->service->listar(FiltrosSolicitacao::fromQuery($request->query), $usuario);
+        Response::paginated($resultado['itens'], $resultado['meta']);
     }
 
     public function show(array $params, UsuarioAutenticado $usuario): never

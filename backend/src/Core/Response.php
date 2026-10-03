@@ -11,6 +11,14 @@ final class Response
         self::json(['data' => $data], $status);
     }
 
+    /**
+     * Lista paginada: os itens em "data" e as informações de paginação em "meta".
+     */
+    public static function paginated(array $itens, array $meta): never
+    {
+        self::json(['data' => $itens, 'meta' => $meta], 200);
+    }
+
     public static function noContent(): never
     {
         http_response_code(204);
