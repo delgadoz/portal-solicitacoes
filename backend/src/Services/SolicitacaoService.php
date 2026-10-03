@@ -9,6 +9,7 @@ use App\Enums\StatusSolicitacao;
 use App\Exceptions\ConflictException;
 use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
+use App\Exceptions\ValidationException;
 use App\Repositories\HistoricoRepository;
 use App\Repositories\SolicitacaoRepository;
 use App\Validators\SolicitacaoValidator;
@@ -17,6 +18,8 @@ use Throwable;
 
 final class SolicitacaoService
 {
+    private const OBSERVACAO_MAX = 500;
+
     public function __construct(
         private readonly PDO $pdo,
         private readonly SolicitacaoRepository $solicitacoes,
@@ -40,6 +43,17 @@ final class SolicitacaoService
         if ($solicitacao === null) {
             throw new NotFoundException('Solicitação não encontrada.');
         }
+
+        return $solicitacao;
+    }
+
+    /**
+     * Detalhes da solicitação com a linha do tempo de mudanças de status.
+     */
+    public function buscarComHistorico(int $id, UsuarioAutenticado $usuario): array
+    {
+        $solicitacao = $this->buscar($id, $usuario);
+        $solicitacao['historico'] = $this->historico->listarPorSolicitacao($id);
 
         return $solicitacao;
     }
@@ -101,28 +115,87 @@ final class SolicitacaoService
     }
 
     /**
-     * EXERCÍCIO: regras para editar ou excluir uma solicitação.
+     * Move a solicitação para o status de destino informado, seguindo a máquina de estados.
      *
-     * - Atendente não edita nem exclui solicitações → ForbiddenException (403)
-     * - Só o próprio solicitante (dono) pode alterar  → ForbiddenException (403)
-     * - Só é possível alterar enquanto o status for Aberto → ConflictException (409),
-     *   com uma mensagem que explique o motivo ao usuário
-     *
-     * Dicas: $solicitacao['solicitante_id'] e $solicitacao['status_id'] vêm do banco;
-     * compare com $usuario->id e com StatusSolicitacao::Aberto->value.
+     * O cliente informa o destino (e não "avance uma etapa"): assim, um clique duplo em
+     * "Iniciar atendimento" não conclui a solicitação por engano — a segunda requisição
+     * pede uma transição que já não é válida e recebe 409.
+     */
+    public function alterarStatus(int $id, array $dados, UsuarioAutenticado $usuario): array
+    {
+        if (!$usuario->isAtendente()) {
+            throw new ForbiddenException('Apenas atendentes podem alterar o status.');
+        }
+
+        $destino = StatusSolicitacao::tryFrom((int) ($dados['status_id'] ?? 0));
+        if ($destino === null) {
+            throw new ValidationException(['status_id' => 'Informe um status válido.']);
+        }
+
+        $observacao = $dados['observacao'] ?? null;
+        $observacao = is_string($observacao) && trim($observacao) !== '' ? trim($observacao) : null;
+        if ($observacao !== null && mb_strlen($observacao) > self::OBSERVACAO_MAX) {
+            throw new ValidationException([
+                'observacao' => sprintf('A observação pode ter no máximo %d caracteres.', self::OBSERVACAO_MAX),
+            ]);
+        }
+
+        $solicitacao = $this->buscar($id, $usuario);
+        $atual = StatusSolicitacao::from((int) $solicitacao['status_id']);
+        $permitido = $atual->proximo();
+
+        if ($permitido === null) {
+            throw new ConflictException('Solicitações concluídas não podem mudar de status.');
+        }
+
+        if ($destino !== $permitido) {
+            throw new ConflictException(sprintf(
+                'Transição inválida: de "%s" só é possível ir para "%s".',
+                $atual->rotulo(),
+                $permitido->rotulo()
+            ));
+        }
+
+        $this->pdo->beginTransaction();
+
+        try {
+            $alterou = $this->solicitacoes->mudarStatus(
+                $id,
+                $atual->value,
+                $destino->value,
+                $usuario->id,
+                $destino === StatusSolicitacao::Concluido
+            );
+
+            if (!$alterou) {
+                throw new ConflictException('A solicitação foi alterada por outra pessoa. Atualize a página.');
+            }
+
+            $this->historico->registrar($id, $atual->value, $destino->value, $usuario->id, $observacao);
+
+            $this->pdo->commit();
+        } catch (Throwable $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
+
+        return $this->buscarComHistorico($id, $usuario);
+    }
+
+    /**
+     * Regras para editar ou excluir uma solicitação: só o solicitante dono, e só enquanto Aberta.
      */
     private function garantirQuePodeAlterar(array $solicitacao, UsuarioAutenticado $usuario): void
     {
-        // TODO
         if ($usuario->isAtendente()) {
             throw new ForbiddenException('Você não tem permissão para executar esta ação.');
         }
 
-        if ($usuario->id !== $solicitacao['solicitante_id']) {
+        if ((int) $solicitacao['solicitante_id'] !== $usuario->id) {
             throw new ForbiddenException('Você não tem permissão para executar esta ação.');
         }
 
-        if ($solicitacao['status_id'] !== StatusSolicitacao::Aberto->value) {
+        if ((int) $solicitacao['status_id'] !== StatusSolicitacao::Aberto->value) {
             throw new ConflictException('A solicitação precisa estar aberta para que a ação seja executada.');
         }
     }

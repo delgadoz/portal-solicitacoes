@@ -54,6 +54,11 @@ $router->put('/api/solicitacoes/{id}', Auth::protect(
     Perfil::Solicitante
 ));
 
+$router->patch('/api/solicitacoes/{id}/status', Auth::protect(
+    fn (Request $r, array $p, UsuarioAutenticado $u) => SolicitacaoController::criar()->updateStatus($r, $p, $u),
+    Perfil::Atendente
+));
+
 $router->delete('/api/solicitacoes/{id}', Auth::protect(
     fn (Request $r, array $p, UsuarioAutenticado $u) => SolicitacaoController::criar()->destroy($p, $u),
     Perfil::Solicitante

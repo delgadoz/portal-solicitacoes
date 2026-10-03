@@ -40,7 +40,7 @@ final class SolicitacaoController
 
     public function show(array $params, UsuarioAutenticado $usuario): never
     {
-        Response::success($this->service->buscar(self::id($params), $usuario));
+        Response::success($this->service->buscarComHistorico(self::id($params), $usuario));
     }
 
     public function store(Request $request, UsuarioAutenticado $usuario): never
@@ -51,6 +51,11 @@ final class SolicitacaoController
     public function update(Request $request, array $params, UsuarioAutenticado $usuario): never
     {
         Response::success($this->service->atualizar(self::id($params), $request->body, $usuario));
+    }
+
+    public function updateStatus(Request $request, array $params, UsuarioAutenticado $usuario): never
+    {
+        Response::success($this->service->alterarStatus(self::id($params), $request->body, $usuario));
     }
 
     public function destroy(array $params, UsuarioAutenticado $usuario): never
