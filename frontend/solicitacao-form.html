@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR" data-bs-theme-base="neutral" data-bs-theme-radius="2">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nova solicitação · Portal de Solicitações</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.6.1/dist/css/tabler.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.6.1/dist/css/tabler-themes.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.48.0/dist/tabler-icons.min.css">
+    <link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body class="carregando">
+    <div class="page">
+        <div id="app-header"></div>
+
+        <div class="page-wrapper">
+            <div class="page-header d-print-none">
+                <div class="container-xl">
+                    <div class="page-pretitle">
+                        <a href="solicitacoes.html" class="text-reset" id="voltar"><i class="ti ti-arrow-left me-1"></i>Solicitações</a>
+                    </div>
+                    <h2 class="page-title" id="titulo">Nova solicitação</h2>
+                </div>
+            </div>
+
+            <div class="page-body">
+                <div class="container-xl">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8">
+                            <form class="card" id="form-solicitacao" novalidate>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label required" for="titulo-campo">Título</label>
+                                        <input type="text" class="form-control" id="titulo-campo" name="titulo"
+                                               minlength="5" maxlength="150" required
+                                               placeholder="Resumo da solicitação">
+                                        <div class="form-hint"><span id="contador-titulo">0</span>/150 caracteres</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label required" for="categoria_id">Categoria</label>
+                                        <select class="form-select" id="categoria_id" name="categoria_id" required>
+                                            <option value="">Selecione...</option>
+                                        </select>
+                                        <div class="form-hint" id="dica-sla"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label required" for="descricao">Descrição</label>
+                                        <textarea class="form-control" id="descricao" name="descricao" rows="6"
+                                                  minlength="10" required
+                                                  placeholder="Descreva o que precisa, com o máximo de detalhes"></textarea>
+                                        <div class="form-hint">Mínimo de 10 caracteres.</div>
+                                    </div>
+                                </div>
+                                <div class="card-footer d-flex gap-2 justify-content-end">
+                                    <a href="solicitacoes.html" class="btn btn-ghost-secondary" id="cancelar">Cancelar</a>
+                                    <button type="submit" class="btn btn-primary" id="salvar">
+                                        <i class="ti ti-device-floppy me-2"></i>Abrir solicitação
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.6.1/dist/js/tabler.min.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/solicitacao-form.js"></script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+/* Identidade do Portal sobre o Tabler: cor principal #293E93 */
+:root,
+[data-bs-theme="light"] {
+    --tblr-primary: #293e93;
+    --tblr-primary-rgb: 41, 62, 147;
+    --tblr-primary-fg: #ffffff;
+    --tblr-primary-darken: #213277;
+    --tblr-primary-lt: #e9ecf6;
+    --tblr-primary-lt-rgb: 233, 236, 246;
+    --tblr-link-color: #293e93;
+    --tblr-link-color-rgb: 41, 62, 147;
+    --tblr-link-hover-color: #213277;
+}
+
+/* No tema escuro, um tom mais claro da mesma cor mantém o contraste */
+[data-bs-theme="dark"] {
+    --tblr-primary: #4f68c7;
+    --tblr-primary-rgb: 79, 104, 199;
+    --tblr-primary-darken: #3f57b0;
+    --tblr-primary-lt: #1f2740;
+    --tblr-primary-lt-rgb: 31, 39, 64;
+    --tblr-link-color: #8ea0e6;
+    --tblr-link-color-rgb: 142, 160, 230;
+    --tblr-link-hover-color: #b0bdf0;
+}
+
+/* Evita "piscar" o conteúdo antes de confirmar o login */
+body.carregando .page {
+    visibility: hidden;
+}
+
+.brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: calc(var(--tblr-border-radius) * 1.2);
+    background: var(--tblr-primary);
+    color: #fff;
+    font-size: 1.15rem;
+}
+
+.navbar-brand {
+    gap: 0.6rem;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.table-solicitacoes tbody tr {
+    cursor: pointer;
+}
+
+.descricao-solicitacao {
+    white-space: pre-wrap;
+}
+
+/* Linha do tempo do histórico */
+.timeline-portal {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.timeline-portal li {
+    position: relative;
+    padding: 0 0 1.25rem 1.75rem;
+}
+
+.timeline-portal li::before {
+    content: "";
+    position: absolute;
+    left: 0.4rem;
+    top: 0.35rem;
+    bottom: -0.35rem;
+    width: 2px;
+    background: var(--tblr-border-color);
+}
+
+.timeline-portal li:last-child::before {
+    display: none;
+}
+
+.timeline-portal .timeline-ponto {
+    position: absolute;
+    left: 0;
+    top: 0.25rem;
+    width: 0.9rem;
+    height: 0.9rem;
+    border-radius: 50%;
+    background: var(--tblr-primary);
+    border: 2px solid var(--tblr-bg-surface);
+}
+
+.toast-container-portal {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 1090;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: calc(100vw - 2rem);
+}
+
+.login-page {
+    min-height: 100vh;
+}

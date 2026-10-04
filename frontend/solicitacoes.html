@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="pt-BR" data-bs-theme-base="neutral" data-bs-theme-radius="2">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Solicitações · Portal de Solicitações</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.6.1/dist/css/tabler.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.6.1/dist/css/tabler-themes.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.48.0/dist/tabler-icons.min.css">
+    <link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body class="carregando">
+    <div class="page">
+        <div id="app-header"></div>
+
+        <div class="page-wrapper">
+            <div class="page-header d-print-none">
+                <div class="container-xl">
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <div class="page-pretitle">Solicitações</div>
+                            <h2 class="page-title" id="titulo-pagina">Solicitações</h2>
+                        </div>
+                        <div class="col-auto ms-auto" id="acoes-cabecalho"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-body">
+                <div class="container-xl">
+                    <!-- Filtros -->
+                    <form id="form-filtros" class="card mb-3" novalidate>
+                        <div class="card-body">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-12 col-lg-4">
+                                    <label class="form-label" for="q">Buscar no título</label>
+                                    <div class="input-icon">
+                                        <span class="input-icon-addon"><i class="ti ti-search"></i></span>
+                                        <input type="search" class="form-control" id="q" name="q"
+                                               placeholder="Ex.: impressora" maxlength="150">
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3 col-lg-2">
+                                    <label class="form-label" for="data_inicio">De</label>
+                                    <input type="date" class="form-control" id="data_inicio" name="data_inicio">
+                                </div>
+                                <div class="col-6 col-md-3 col-lg-2">
+                                    <label class="form-label" for="data_fim">Até</label>
+                                    <input type="date" class="form-control" id="data_fim" name="data_fim">
+                                </div>
+                                <div class="col-6 col-md-3 col-lg-2">
+                                    <label class="form-label" for="categoria_id">Categoria</label>
+                                    <select class="form-select" id="categoria_id" name="categoria_id">
+                                        <option value="">Todas</option>
+                                    </select>
+                                </div>
+                                <div class="col-6 col-md-3 col-lg-2">
+                                    <label class="form-label" for="status_id">Status</label>
+                                    <select class="form-select" id="status_id" name="status_id">
+                                        <option value="">Todos</option>
+                                        <option value="1">Aberto</option>
+                                        <option value="2">Em Atendimento</option>
+                                        <option value="3">Concluído</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex gap-2 justify-content-end">
+                            <button type="button" class="btn btn-ghost-secondary" id="limpar-filtros">
+                                <i class="ti ti-x me-1"></i>Limpar
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="ti ti-filter me-1"></i>Filtrar
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Listagem -->
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="table table-vcenter card-table table-hover table-solicitacoes">
+                                <thead>
+                                    <tr>
+                                        <th class="w-1">Código</th>
+                                        <th><button type="button" class="table-sort" data-ordenar="titulo">Título</button></th>
+                                        <th class="d-none d-md-table-cell"><button type="button" class="table-sort" data-ordenar="categoria">Categoria</button></th>
+                                        <th class="d-none d-md-table-cell">Solicitante</th>
+                                        <th><button type="button" class="table-sort" data-ordenar="criado_em">Abertura</button></th>
+                                        <th><button type="button" class="table-sort" data-ordenar="status">Status</button></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lista">
+                                    <tr><td colspan="6" class="text-center text-secondary py-4">Carregando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer d-flex flex-wrap gap-2 align-items-center">
+                            <p class="m-0 text-secondary" id="resumo-paginacao"></p>
+                            <ul class="pagination m-0 ms-auto" id="paginacao"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.6.1/dist/js/tabler.min.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/solicitacoes.js"></script>
+</body>
+</html>

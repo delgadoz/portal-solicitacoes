@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="pt-BR" data-bs-theme-base="neutral" data-bs-theme-radius="2">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard · Portal de Solicitações</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.6.1/dist/css/tabler.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.6.1/dist/css/tabler-themes.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.48.0/dist/tabler-icons.min.css">
+    <link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body class="carregando">
+    <div class="page">
+        <div id="app-header"></div>
+
+        <div class="page-wrapper">
+            <div class="page-header d-print-none">
+                <div class="container-xl">
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <div class="page-pretitle" id="pretitulo">Visão geral</div>
+                            <h2 class="page-title">Dashboard</h2>
+                        </div>
+                        <div class="col-auto ms-auto d-print-none" id="acoes-cabecalho"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-body">
+                <div class="container-xl">
+                    <div class="row row-deck row-cards">
+                        <!-- Indicadores principais -->
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="card card-sm">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="bg-primary text-white avatar"><i class="ti ti-files fs-2"></i></span>
+                                        </div>
+                                        <div class="col">
+                                            <div class="h1 mb-0" data-kpi="total">—</div>
+                                            <div class="text-secondary">Total de solicitações</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="card card-sm">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="bg-blue text-white avatar"><i class="ti ti-inbox fs-2"></i></span>
+                                        </div>
+                                        <div class="col">
+                                            <div class="h1 mb-0" data-kpi="abertas">—</div>
+                                            <div class="text-secondary">Abertas</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="card card-sm">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="bg-yellow text-white avatar"><i class="ti ti-progress fs-2"></i></span>
+                                        </div>
+                                        <div class="col">
+                                            <div class="h1 mb-0" data-kpi="em_atendimento">—</div>
+                                            <div class="text-secondary">Em atendimento</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="card card-sm">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="bg-green text-white avatar"><i class="ti ti-circle-check fs-2"></i></span>
+                                        </div>
+                                        <div class="col">
+                                            <div class="h1 mb-0" data-kpi="concluidas">—</div>
+                                            <div class="text-secondary">Concluídas</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SLA e tempo médio -->
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Prazos (SLA)</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-4">
+                                        <div class="d-flex align-items-baseline">
+                                            <div class="subheader">Concluídas no prazo</div>
+                                            <div class="ms-auto h3 mb-0" data-kpi="percentual_no_prazo">—</div>
+                                        </div>
+                                        <div class="progress progress-sm mt-2">
+                                            <div class="progress-bar bg-green" id="barra-prazo" style="width: 0%"
+                                                 role="progressbar" aria-label="Percentual concluído no prazo"></div>
+                                        </div>
+                                        <div class="text-secondary small mt-1">
+                                            <span data-kpi="concluidas_no_prazo">—</span> de
+                                            <span data-kpi="concluidas_sla">—</span> concluídas
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <span class="avatar avatar-sm bg-red-lt me-3"><i class="ti ti-clock-exclamation"></i></span>
+                                        <div>
+                                            <div class="fw-bold" data-kpi="vencidas">—</div>
+                                            <div class="text-secondary small">Em aberto com SLA vencido</div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <span class="avatar avatar-sm bg-primary-lt me-3"><i class="ti ti-hourglass"></i></span>
+                                        <div>
+                                            <div class="fw-bold" data-kpi="tempo_medio">—</div>
+                                            <div class="text-secondary small">Tempo médio de atendimento</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gráfico por categoria -->
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Solicitações por categoria</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div style="position: relative; height: 240px">
+                                        <canvas id="grafico-categorias" aria-label="Gráfico de solicitações por categoria"
+                                                role="img"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Últimas solicitações -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Últimas solicitações</h3>
+                                    <div class="card-actions">
+                                        <a href="solicitacoes.html" class="btn btn-sm">Ver todas</a>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-vcenter card-table table-hover table-solicitacoes">
+                                        <thead>
+                                            <tr>
+                                                <th class="w-1">Código</th>
+                                                <th>Título</th>
+                                                <th>Categoria</th>
+                                                <th>Solicitante</th>
+                                                <th>Abertura</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="ultimas">
+                                            <tr><td colspan="6" class="text-center text-secondary py-4">Carregando...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.6.1/dist/js/tabler.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+</body>
+</html>

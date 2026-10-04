@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR" data-bs-theme-base="neutral" data-bs-theme-radius="2">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Entrar · Portal de Solicitações</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.6.1/dist/css/tabler.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.6.1/dist/css/tabler-themes.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.48.0/dist/tabler-icons.min.css">
+    <link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body class="d-flex flex-column">
+    <div class="page page-center login-page">
+        <div class="position-absolute top-0 end-0 p-3">
+            <button type="button" class="btn btn-ghost-secondary btn-icon" data-acao="tema"></button>
+        </div>
+
+        <div class="container container-tight py-4">
+            <div class="text-center mb-4">
+                <span class="navbar-brand navbar-brand-autodark d-inline-flex align-items-center">
+                    <span class="brand-mark"><i class="ti ti-ticket"></i></span>
+                    <span class="fs-2 fw-bold">Portal de Solicitações</span>
+                </span>
+            </div>
+
+            <div class="card card-md">
+                <div class="card-body">
+                    <h2 class="h2 text-center mb-1">Acesse sua conta</h2>
+                    <p class="text-secondary text-center mb-4">Abra e acompanhe solicitações internas</p>
+
+                    <div id="erro-login" class="alert alert-danger d-none" role="alert"></div>
+
+                    <form id="form-login" novalidate>
+                        <div class="mb-3">
+                            <label class="form-label" for="usuario">Usuário</label>
+                            <input type="text" class="form-control" id="usuario" name="usuario"
+                                   autocomplete="username" required autofocus>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="senha">Senha</label>
+                            <div class="input-group input-group-flat">
+                                <input type="password" class="form-control" id="senha" name="senha"
+                                       autocomplete="current-password" required>
+                                <span class="input-group-text">
+                                    <button type="button" class="btn btn-link link-secondary p-0" id="mostrar-senha"
+                                            aria-label="Mostrar senha" title="Mostrar senha">
+                                        <i class="ti ti-eye"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-footer">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="ti ti-login-2 me-2"></i>Entrar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.6.1/dist/js/tabler.min.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/login.js"></script>
+</body>
+</html>

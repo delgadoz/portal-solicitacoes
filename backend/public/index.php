@@ -7,6 +7,15 @@ use App\Core\Request;
 use App\Core\Router;
 use Dotenv\Dotenv;
 
+// Servidor embutido do PHP (composer serve): o que não for /api é arquivo estático do frontend.
+// Retornar false faz o próprio servidor entregar o arquivo da pasta frontend (definida com -t).
+if (PHP_SAPI === 'cli-server') {
+    $caminho = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+    if (!str_starts_with($caminho, '/api')) {
+        return false;
+    }
+}
+
 require __DIR__ . '/../vendor/autoload.php';
 
 $dotenv = Dotenv::createImmutable(dirname(__DIR__));
