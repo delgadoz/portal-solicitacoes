@@ -9,8 +9,8 @@
 - **Configuração via `.env` (phpdotenv).** Credenciais fora do código; `.env.example` documenta as variáveis necessárias.
 - **PSR-12 verificado com PHP CodeSniffer.** Padroniza formatação e nomenclatura de forma automática.
 - **Conventional Commits, branches por funcionalidade e PRs com "Closes #N".** Histórico legível e rastreável entre issue, código e entrega.
-- **GitHub Projects com issues e labels.** Backlog organizado em uma sprint, aplicando Scrum na prática.
-- **Premissa: atendente não cria solicitações.**
+- **GitHub Projects com issues e labels.** Backlog organizado em uma sprint.
+- **Premissa considerada: atendente não cria solicitações.**
 
 ## Fase 1 — Banco de dados
 
@@ -49,3 +49,33 @@
 - **Perfil como enum do PHP 8.2.** Valores possíveis garantidos pela linguagem, sem strings soltas no código.
 - **Arquitetura em camadas: Controller → Service → Repository.** Controller valida entrada e responde; Service tem a regra; Repository tem o SQL.
 - **Cabeçalhos de segurança e remoção do `X-Powered-By`.**
+
+## Fase 2 — Solicitações, status, filtros e dashboard
+
+- **Visibilidade aplicada na consulta SQL.** O solicitante só "encontra" as próprias solicitações; a de outra pessoa responde 404, sem revelar que existe.
+- **Campos automáticos definidos pelo servidor.** Data, solicitante e status inicial nunca vêm do cliente; o validador devolve só título, descrição e categoria.
+- **Transações na criação e na mudança de status.** Solicitação/status e histórico são gravados juntos, ou nenhum dos dois.
+- **Defesa em profundidade nas permissões.** A rota exige o perfil e o Service confere de novo (dono e status Aberto para editar/excluir).
+- **Máquina de estados no enum `StatusSolicitacao`.** `proximo()` com `match` define a única transição válida; pular, voltar ou reabrir → 409.
+- **Cliente informa o status de destino.** Requisição repetida (clique duplo) é rejeitada em vez de avançar duas etapas (idempotência).
+- **Controle otimista de concorrência.** `UPDATE ... WHERE status_id = :status_lido`; se outro atendente mudou antes, 409.
+- **Ordenação por whitelist.** Nome de coluna não pode ser parâmetro de prepared statement; só valores de uma lista fixa entram no `ORDER BY`.
+- **Filtro de período com `criado_em < dia seguinte`.** Inclui o dia final inteiro e preserva o uso do índice.
+- **Escape de `%` e `_` na busca.** O texto digitado é procurado literalmente, não como curinga.
+- **Paginação com `meta`.** `LIMIT`/`OFFSET` ligados como inteiros e total calculado com os mesmos filtros.
+- **Dashboard em uma consulta.** `SUM` de comparações para os totais; `LEFT JOIN` com filtro no `ON` para manter categorias zeradas; divisão por zero tratada.
+
+## Fase 3 — Frontend
+
+- **Tabler (Bootstrap 5) via CDN.** Mantém a stack Bootstrap e entrega componentes de painel e tema escuro sem build.
+- **Mesma origem para frontend e API.** O servidor entrega `/api` pelo PHP e o resto como estático: sem CORS, cookie `SameSite=Strict` funciona.
+- **Cliente HTTP centralizado (`api.js`).** CSRF, 401 → login e erros por campo tratados em um só lugar.
+- **Escape de todo texto vindo da API.** Proteção contra XSS; descrição exibida com `textContent`.
+- **Validação no navegador apenas como conveniência.** As regras são garantidas no backend; erros 422 aparecem no campo certo.
+- **Botões desabilitados durante o envio e confirmação antes de excluir.**
+- **Filtros, página e ordenação na URL.** O estado sobrevive ao F5 e pode ser compartilhado.
+
+## Fase 4 — Entrega
+
+- **Script único `database/setup.sql`.** Cria banco, tabelas e dados em um passo; gerado a partir das migrations e seeds.
+- **Testes automatizados, Docker e CI ficaram como melhorias futuras.** 
