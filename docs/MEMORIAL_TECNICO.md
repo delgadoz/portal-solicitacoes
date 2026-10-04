@@ -252,11 +252,7 @@ máquina de estados, e cada funcionalidade foi testada manualmente pela API (cur
 
 - **Reabertura:** hoje uma solicitação concluída é definitiva. Em um cenário real, um prazo curto para o
   solicitante reabrir (ou avaliar o atendimento) melhoraria o controle de qualidade.
-- **Visualização:** hoje o perfil atendente consegue visualizar todas as solicitações, inclusive as de outros
-atendentes. O ideal seria cada atendente visualizar apenas as solicitações atendidas por ele, e a criação de um perfil novo 'admin'
-para visualizar todas as solicitações.
-- **Atribuição:** o atendente que inicia o atendimento é registrado, mas não há fila nem atribuição prévia por
-  categoria ou equipe.
+- **Atribuição e visibilidade:** o atendente que inicia o atendimento já é registrado (atendente_id), mas todo atendente vê todas as solicitações e não há atribuição prévia. Evolução: cada atendente veria a fila de abertas ainda não assumidas mais as suas, com atribuição por categoria ou equipe, e um perfil Administrador veria todas, redistribuiria solicitações e acompanharia o dashboard geral.
 - **SLA por prioridade:** o prazo depende só da categoria; uma prioridade (baixa, média, alta) tornaria o SLA mais fiel.
 
 ### 4.4 O que seria diferente em produção
