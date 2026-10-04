@@ -13,6 +13,7 @@ use App\Exceptions\ValidationException;
 use App\Repositories\LoginTentativaRepository;
 use App\Repositories\UsuarioRepository;
 use App\Services\AuthService;
+use App\Validators\SenhaValidator;
 
 final class AuthController
 {
@@ -30,6 +31,7 @@ final class AuthController
         return new self(new AuthService(
             new UsuarioRepository($pdo),
             new LoginTentativaRepository($pdo),
+            new SenhaValidator(),
             (int) ($_ENV['LOGIN_MAX_TENTATIVAS'] ?? 5),
             (int) ($_ENV['LOGIN_JANELA_MINUTOS'] ?? 15)
         ));
@@ -62,6 +64,16 @@ final class AuthController
 
     public function logout(): never
     {
+        Session::logout();
+        Response::noContent();
+    }
+
+    /**
+     * Troca a senha e encerra a sessão: o usuário entra de novo, já com a nova senha.
+     */
+    public function alterarSenha(Request $request, UsuarioAutenticado $usuario): never
+    {
+        $this->service->alterarSenha($usuario, $request->body, $request->ip, $request->userAgent);
         Session::logout();
         Response::noContent();
     }
