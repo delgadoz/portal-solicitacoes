@@ -250,7 +250,16 @@ const App = (() => {
             feedback.className = 'invalid-feedback';
             feedback.dataset.gerado = '1';
             feedback.textContent = mensagem;
-            campo.insertAdjacentElement('afterend', feedback);
+
+            // Campo dentro de um grupo (ex.: senha com botão de mostrar): a mensagem vai depois do grupo,
+            // para não quebrar o alinhamento. Fora do grupo, o Bootstrap não a exibe sozinho, daí o d-block.
+            const grupo = campo.closest('.input-group, .input-icon');
+            if (grupo) {
+                feedback.classList.add('d-block');
+                grupo.insertAdjacentElement('afterend', feedback);
+            } else {
+                campo.insertAdjacentElement('afterend', feedback);
+            }
         });
         form.querySelector('.is-invalid')?.focus();
     }
