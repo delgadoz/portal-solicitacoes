@@ -69,7 +69,8 @@ Trilha de auditoria das mudanças de status, incluindo a criação.
 
 ## login_tentativas
 
-Registro de todas as tentativas de login, usado no rate limiting e na auditoria de acesso.
+Registro de todas as tentativas de login, usado no rate limiting e na auditoria de acesso. Também recebe as
+falhas de senha atual na alteração de senha, que contam no mesmo limite.
 
 | Coluna | Tipo | Nulo | Chave | Padrão | Descrição |
 | --- | --- | --- | --- | --- | --- |
