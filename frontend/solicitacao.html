@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-BR" data-bs-theme-base="neutral" data-bs-theme-radius="2">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Solicitação · Portal de Solicitações</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.6.1/dist/css/tabler.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.6.1/dist/css/tabler-themes.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.48.0/dist/tabler-icons.min.css">
+    <link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body class="carregando">
+    <div class="page">
+        <div id="app-header"></div>
+
+        <div class="page-wrapper">
+            <div class="page-header d-print-none">
+                <div class="container-xl">
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <div class="page-pretitle">
+                                <a href="solicitacoes.html" class="text-reset"><i class="ti ti-arrow-left me-1"></i>Solicitações</a>
+                            </div>
+                            <h2 class="page-title" id="titulo">Carregando...</h2>
+                        </div>
+                        <div class="col-auto ms-auto d-flex gap-2" id="acoes"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-body">
+                <div class="container-xl">
+                    <div class="row row-cards">
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Detalhes</h3>
+                                    <div class="card-actions" id="status-atual"></div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="datagrid mb-4" id="dados"></div>
+                                    <div class="datagrid-title mb-1">Descrição</div>
+                                    <div class="descricao-solicitacao" id="descricao"></div>
+                                </div>
+                            </div>
+
+                            <!-- Ação do atendente: avançar o status -->
+                            <form class="card mt-3 d-none" id="form-status" novalidate>
+                                <div class="card-header">
+                                    <h3 class="card-title">Atendimento</h3>
+                                </div>
+                                <div class="card-body">
+                                    <label class="form-label" for="observacao">Observação (opcional)</label>
+                                    <textarea class="form-control" id="observacao" name="observacao" rows="3"
+                                              maxlength="500" placeholder="Ex.: o que foi verificado ou feito"></textarea>
+                                    <div class="form-hint" id="contador-observacao">0/500</div>
+                                </div>
+                                <div class="card-footer text-end">
+                                    <button type="submit" class="btn btn-primary" id="botao-status"></button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Histórico</h3>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="timeline-portal" id="historico"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.6.1/dist/js/tabler.min.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/solicitacao.js"></script>
+</body>
+</html>

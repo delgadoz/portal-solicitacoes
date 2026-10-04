@@ -29,7 +29,7 @@
         "test": "phpunit",
         "lint": "phpcs",
         "lint:fix": "phpcbf",
-        "serve": "php -S localhost:8080 -t public public/index.php"
+        "serve": "php -S localhost:8080 -t ../frontend public/index.php"
     },
     "config": {
         "process-timeout": 0
