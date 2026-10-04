@@ -78,4 +78,15 @@
 ## Fase 4 — Entrega
 
 - **Script único `database/setup.sql`.** Cria banco, tabelas e dados em um passo; gerado a partir das migrations e seeds.
-- **Testes automatizados, Docker e CI ficaram como melhorias futuras.** 
+- **Testes automatizados, Docker e CI ficaram como melhorias futuras.**
+
+## Funcionalidade adicional — Alteração de senha
+
+- **Rota `PUT /api/me/senha`, para qualquer perfil.** A senha é um atributo do próprio usuário logado; o id vem da sessão, nunca do cliente.
+- **Senha atual obrigatória.** Uma sessão esquecida aberta não basta para tomar a conta.
+- **Política de senha forte: 8+ caracteres, 1 maiúscula, 1 número e 1 caractere especial.** Validada no backend (`SenhaValidator`); o frontend mostra os requisitos sendo atendidos enquanto o usuário digita, só como orientação.
+- **Máximo de 72 bytes.** O bcrypt ignora o que passa disso; o limite evita uma senha "mais longa" que na prática não é.
+- **Senha atual errada → 422 no campo `senha_atual`, e não 401.** O usuário está autenticado; um 401 faria o frontend mandá-lo para o login.
+- **Erros de senha atual contam no rate limiting do login (usuário + IP).** Reaproveita `login_tentativas`: com a sessão de outra pessoa não é possível testar senhas à vontade.
+- **Após a troca, a sessão é encerrada (204) e o usuário volta ao login.** Confirma a nova senha na prática e descarta a sessão criada com a credencial antiga.
+- **Outras sessões abertas do mesmo usuário continuam válidas.** Limitação conhecida, registrada no memorial.

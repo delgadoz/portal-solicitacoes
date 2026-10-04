@@ -19,6 +19,7 @@ Desenvolvido como mini-projeto Full Stack para o processo seletivo de Desenvolve
 
 - Login com sessão segura, logout e expiração por inatividade
 - Bloqueio temporário após tentativas de login falhas (rate limiting) e registro de todas as tentativas
+- Alteração da própria senha (menu do usuário), com política de senha forte e novo login obrigatório em seguida
 - Controle de acesso por perfil:
   - **Solicitante:** cria solicitações; vê, edita e exclui apenas as próprias, e somente enquanto estiverem Abertas
   - **Atendente:** vê todas as solicitações e altera o status, sem pular etapas e sem reabrir as concluídas
@@ -141,6 +142,10 @@ Senha de todos: **`Senha@123`**
 
 Após 5 tentativas de login com senha errada em 15 minutos, o usuário é bloqueado temporariamente para aquele IP.
 
+Para alterar a senha, use **Alterar senha** no menu do usuário (canto superior direito). A nova senha precisa ter
+pelo menos 8 caracteres, com 1 letra maiúscula, 1 número e 1 caractere especial. Após a troca, a sessão é encerrada
+e é preciso entrar com a nova senha. Para voltar às senhas de demonstração, execute o `database/setup.sql` novamente.
+
 ---
 
 ## Telas
@@ -169,6 +174,7 @@ também o cabeçalho `X-CSRF-Token` (o token é devolvido pelo login e por `/api
 | POST | `/api/login` | Público | Autentica (`usuario`, `senha`) |
 | POST | `/api/logout` | Logado | Encerra a sessão |
 | GET | `/api/me` | Logado | Usuário logado e token CSRF |
+| PUT | `/api/me/senha` | Logado | Altera a própria senha (`senha_atual`, `nova_senha`, `confirmacao`) e encerra a sessão |
 | GET | `/api/categorias` | Logado | Categorias e respectivos SLAs |
 | GET | `/api/dashboard` | Logado | Indicadores (no escopo do perfil) |
 | GET | `/api/solicitacoes` | Logado | Lista com filtros e paginação |

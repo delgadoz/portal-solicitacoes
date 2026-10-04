@@ -129,7 +129,7 @@ sessão com `SameSite=Strict`.
 | `Core/Auth` (middleware) | Exige login, valida CSRF e, quando indicado, o perfil | `Auth::protect(fn, Perfil::Atendente)` |
 | Controllers | Leem a requisição e montam a resposta HTTP | `SolicitacaoController` |
 | Services | Regras de negócio, permissões e transações | `SolicitacaoService::alterarStatus()` |
-| Validators | Validam e normalizam a entrada | `SolicitacaoValidator`, `FiltrosSolicitacao` |
+| Validators | Validam e normalizam a entrada | `SolicitacaoValidator`, `FiltrosSolicitacao`, `SenhaValidator` |
 | Repositories | SQL e acesso a dados | `SolicitacaoRepository` |
 
 O Controller nunca executa SQL e o Repository nunca decide regra. As dependências são passadas pelo construtor
@@ -183,6 +183,11 @@ Regras de negócio implementadas no servidor:
 - Token CSRF exigido em `POST`, `PUT`, `PATCH` e `DELETE`, comparado com `hash_equals`.
 - **Rate limiting:** cada tentativa de login é registrada; com 5 falhas em 15 minutos para o mesmo usuário e IP,
   a API responde 429 **antes** de conferir a senha.
+- **Alteração de senha** (`PUT /api/me/senha`): exige a senha atual, aplica a política de senha forte (mínimo de 8
+  caracteres, com 1 maiúscula, 1 número e 1 caractere especial; máximo de 72 bytes, limite do bcrypt) e, em caso de
+  sucesso, encerra a sessão para que o usuário entre de novo com a nova senha. Senha atual errada responde 422 no
+  campo (o usuário está logado; 401 o mandaria para o login) e conta no mesmo limite de tentativas do login, para
+  que uma sessão alheia não sirva para testar senhas.
 - Mensagem única "Usuário ou senha inválidos" e verificação de senha mesmo para usuários inexistentes (hash
   fictício), para que nem a mensagem nem o tempo de resposta revelem quais usuários existem.
 - Cabeçalhos de segurança (`X-Content-Type-Options`, `X-Frame-Options`, `Content-Security-Policy`) e remoção do
@@ -229,6 +234,9 @@ máquina de estados, e cada funcionalidade foi testada manualmente pela API (cur
   roteirizados. Os repositórios são classes concretas acopladas ao PDO, o que dificulta simular o banco nos testes
   de serviço.
 - **Sem cadastro de usuários pela interface:** os usuários vêm do script de demonstração; não há perfil administrador.
+- **Troca de senha não encerra outras sessões:** a sessão atual é encerrada, mas uma sessão aberta em outro
+  navegador continua válida até expirar. Resolver exigiria guardar a data da última troca de senha e compará-la a
+  cada requisição (ou manter as sessões no banco).
 - **Rate limiting no banco:** funciona bem para o volume esperado, mas cada tentativa gera uma escrita.
 - **Busca por título com `LIKE '%termo%'`:** não aproveita índice; com grande volume, seria lenta.
 - **Dependência de CDN no frontend:** sem internet, a interface perde estilos e o gráfico.

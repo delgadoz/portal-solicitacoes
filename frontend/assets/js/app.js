@@ -137,6 +137,10 @@ const App = (() => {
                             </a>
                             <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                                 <span class="dropdown-header">${esc(usuarioAtual.usuario)}</span>
+                                <button type="button" class="dropdown-item" data-acao="alterar-senha">
+                                    <i class="ti ti-key me-2"></i>Alterar senha
+                                </button>
+                                <div class="dropdown-divider"></div>
                                 <button type="button" class="dropdown-item" data-acao="sair">
                                     <i class="ti ti-logout me-2"></i>Sair
                                 </button>
@@ -166,8 +170,108 @@ const App = (() => {
             </header>`;
 
         destino.querySelector('[data-acao="sair"]').addEventListener('click', sair);
+        destino.querySelector('[data-acao="alterar-senha"]').addEventListener('click', abrirAlterarSenha);
         destino.querySelector('[data-acao="tema"]').addEventListener('click', alternarTema);
         atualizarBotaoTema();
+    }
+
+    /* ---------- Alteração de senha (modal aberto pelo menu do usuário) ---------- */
+
+    // Mesma política do backend (SenhaValidator); aqui serve só para orientar enquanto o usuário digita
+    const REQUISITOS_SENHA = [
+        { id: 'tamanho', texto: 'Pelo menos 8 caracteres', teste: (s) => [...s].length >= 8 },
+        { id: 'maiuscula', texto: '1 letra maiúscula', teste: (s) => /\p{Lu}/u.test(s) },
+        { id: 'numero', texto: '1 número', teste: (s) => /\d/.test(s) },
+        { id: 'especial', texto: '1 caractere especial (ex.: ! @ # $ %)', teste: (s) => /[^\p{L}\p{N}\s]/u.test(s) },
+    ];
+
+    function campoSenha(nome, rotulo, autocomplete) {
+        return `
+            <div class="mb-3">
+                <label class="form-label" for="campo-${nome}">${rotulo}</label>
+                <input type="password" class="form-control" id="campo-${nome}" name="${nome}"
+                       autocomplete="${autocomplete}" maxlength="72" required>
+            </div>`;
+    }
+
+    function abrirAlterarSenha() {
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = `
+            <div class="modal modal-blur fade" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="titulo-senha">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <form class="modal-content" novalidate>
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="titulo-senha">Alterar senha</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                        </div>
+                        <div class="modal-body">
+                            ${campoSenha('senha_atual', 'Senha atual', 'current-password')}
+                            ${campoSenha('nova_senha', 'Nova senha', 'new-password')}
+                            <ul class="list-unstyled small mb-3 requisitos-senha">
+                                ${REQUISITOS_SENHA.map((r) => `
+                                    <li data-requisito="${r.id}"><i class="ti ti-circle me-1"></i>${r.texto}</li>`).join('')}
+                            </ul>
+                            ${campoSenha('confirmacao', 'Confirme a nova senha', 'new-password')}
+                            <div class="alert alert-info mb-0">
+                                <div class="d-flex">
+                                    <i class="ti ti-info-circle alert-icon"></i>
+                                    <div>Após alterar, você será desconectado e deverá entrar com a nova senha.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-ghost-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="ti ti-device-floppy me-2"></i>Alterar senha
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>`;
+        const elemento = wrapper.firstElementChild;
+        document.body.appendChild(elemento);
+
+        const form = elemento.querySelector('form');
+        const modal = new tabler.bootstrap.Modal(elemento);
+
+        form.nova_senha.addEventListener('input', () => {
+            REQUISITOS_SENHA.forEach((r) => {
+                const ok = r.teste(form.nova_senha.value);
+                const item = form.querySelector(`[data-requisito="${r.id}"]`);
+                item.classList.toggle('text-success', ok);
+                item.querySelector('i').className = `ti ti-${ok ? 'circle-check' : 'circle'} me-1`;
+            });
+        });
+
+        form.addEventListener('submit', async (evento) => {
+            evento.preventDefault();
+            limparErros(form);
+
+            const dados = {
+                senha_atual: form.senha_atual.value,
+                nova_senha: form.nova_senha.value,
+                confirmacao: form.confirmacao.value,
+            };
+
+            await comBotaoOcupado(form.querySelector('[type="submit"]'), async () => {
+                try {
+                    await Api.put('/api/me/senha', dados);
+                    // O backend já encerrou a sessão: volta ao login com o aviso
+                    notificarAposRedirecionar('Senha alterada com sucesso. Entre com a nova senha.');
+                    location.href = 'login.html';
+                } catch (erro) {
+                    if (erro.status === 422) {
+                        mostrarErros(form, erro.fields);
+                    } else {
+                        notificar(erro.message, 'danger');
+                    }
+                }
+            });
+        });
+
+        elemento.addEventListener('shown.bs.modal', () => form.senha_atual.focus());
+        elemento.addEventListener('hidden.bs.modal', () => elemento.remove());
+        modal.show();
     }
 
     /* ---------- Formatação ---------- */

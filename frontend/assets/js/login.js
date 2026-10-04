@@ -5,6 +5,7 @@
 
     document.querySelector('[data-acao="tema"]').addEventListener('click', App.alternarTema);
     App.atualizarBotaoTema();
+    App.exibirNotificacaoPendente(); // ex.: "Senha alterada" após a troca de senha
 
     // Já logado? Vai direto para o dashboard
     Api.get('/api/me').then(() => { location.href = 'index.html'; }).catch(() => {});
