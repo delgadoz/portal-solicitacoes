@@ -25,4 +25,20 @@ final class UsuarioRepository
 
         return $registro === false ? null : $registro;
     }
+
+    public function buscarSenhaHash(int $id): ?string
+    {
+        $stmt = $this->pdo->prepare('SELECT senha_hash FROM usuarios WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+
+        $hash = $stmt->fetchColumn();
+
+        return $hash === false ? null : (string) $hash;
+    }
+
+    public function atualizarSenha(int $id, string $senhaHash): void
+    {
+        $stmt = $this->pdo->prepare('UPDATE usuarios SET senha_hash = :senha_hash WHERE id = :id');
+        $stmt->execute(['senha_hash' => $senhaHash, 'id' => $id]);
+    }
 }

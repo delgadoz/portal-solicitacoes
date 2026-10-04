@@ -32,6 +32,11 @@ $router->get('/api/me', Auth::protect(
     fn (Request $request, array $params, UsuarioAutenticado $usuario) => AuthController::criar()->me($usuario)
 ));
 
+// Troca da própria senha (qualquer perfil); encerra a sessão em seguida
+$router->put('/api/me/senha', Auth::protect(
+    fn (Request $r, array $p, UsuarioAutenticado $u) => AuthController::criar()->alterarSenha($r, $u)
+));
+
 $router->get('/api/categorias', Auth::protect(
     fn () => CategoriaController::index()
 ));
