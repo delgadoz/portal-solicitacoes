@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Controllers\AuthController;
 use App\Controllers\CategoriaController;
+use App\Controllers\DashboardController;
 use App\Controllers\SolicitacaoController;
 use App\Core\Auth;
 use App\Core\Database;
@@ -33,6 +34,11 @@ $router->get('/api/me', Auth::protect(
 
 $router->get('/api/categorias', Auth::protect(
     fn () => CategoriaController::index()
+));
+
+// Dashboard: indicadores no escopo do perfil
+$router->get('/api/dashboard', Auth::protect(
+    fn (Request $r, array $p, UsuarioAutenticado $u) => DashboardController::index($u)
 ));
 
 // Solicitações: visibilidade e permissões por perfil são aplicadas no SolicitacaoService
