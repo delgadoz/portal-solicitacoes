@@ -38,7 +38,6 @@ formulários para melhorar a experiência, mas quem decide o que cada usuário p
 | Chart.js 4 | Gráfico do dashboard |
 | Tabler Icons | Ícones |
 | PHP CodeSniffer (PSR-12) | Padronização do código |
-| PHPUnit | Instalado para testes automatizados (ver Análise Crítica) |
 | Git, GitHub, GitHub Projects | Versionamento, revisão via Pull Requests e gestão do backlog |
 
 ### PHP 8.2, sem framework
@@ -230,9 +229,9 @@ máquina de estados, e cada funcionalidade foi testada manualmente pela API (cur
 
 ### 4.1 Limitações da solução
 
-- **Sem testes automatizados:** o PHPUnit está instalado, mas a validação foi feita com testes manuais
-  roteirizados. Os repositórios são classes concretas acopladas ao PDO, o que dificulta simular o banco nos testes
-  de serviço.
+- **Sem testes automatizados:** a validação foi feita com testes manuais roteirizados, pela API (curl) e pela
+  interface. O PHPUnit chegou a ser instalado, mas foi removido por não ter sido usado. Os repositórios são classes
+  concretas acopladas ao PDO, o que dificulta simular o banco nos testes de serviço.
 - **Sem cadastro de usuários pela interface:** os usuários vêm do script de demonstração; não há perfil administrador.
 - **Troca de senha não encerra outras sessões:** a sessão atual é encerrada, mas uma sessão aberta em outro
   navegador continua válida até expirar. Resolver exigiria guardar a data da última troca de senha e compará-la a

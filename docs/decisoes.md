@@ -5,7 +5,7 @@
 - **API REST separada do frontend.** Backend retorna só JSON; frontend consome via fetch. Separa responsabilidades e atende o requisito de "consumo da API".
 - **Composer com autoload PSR-4 (`App\` → `src/`).** Padrão de mercado; elimina `require_once` manuais e facilita os testes.
 - **composer.lock versionado.** Garante as mesmas versões das dependências em todos os ambientes (builds reproduzíveis).
-- **Dependências separadas em `require` e `require-dev`.** PHPUnit e phpcs só existem em desenvolvimento; produção usa `composer install --no-dev`.
+- **Dependências separadas em `require` e `require-dev`.** O phpcs só existe em desenvolvimento; produção usa `composer install --no-dev`.
 - **Configuração via `.env` (phpdotenv).** Credenciais fora do código; `.env.example` documenta as variáveis necessárias.
 - **PSR-12 verificado com PHP CodeSniffer.** Padroniza formatação e nomenclatura de forma automática.
 - **Conventional Commits, branches por funcionalidade e PRs com "Closes #N".** Histórico legível e rastreável entre issue, código e entrega.
@@ -79,6 +79,7 @@
 
 - **Script único `database/setup.sql`.** Cria banco, tabelas e dados em um passo; gerado a partir das migrations e seeds.
 - **Testes automatizados, Docker e CI ficaram como melhorias futuras.**
+- **PHPUnit removido das dependências.** Como os testes automatizados ficaram para depois, manter a biblioteca instalada só deixaria o `composer install` mais lento e exigiria extensões do PHP a mais. Volta ao `require-dev` junto com os primeiros testes.
 
 ## Funcionalidade adicional — Alteração de senha
 
