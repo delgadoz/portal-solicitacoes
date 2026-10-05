@@ -36,7 +36,7 @@ Desenvolvido como mini-projeto Full Stack para o processo seletivo de Desenvolve
 | --- | --- | --- |
 | PHP | 8.2 ou superior | Extensões `pdo_mysql` e `mbstring` habilitadas (já vêm ativas no XAMPP) |
 | Composer | 2.x | Gerenciador de dependências do PHP |
-| MySQL | 8.0 | Projeto desenvolvido e testado com MySQL 8.0 |
+| MySQL | 8.0 | Desenvolvido com MySQL 8.0; também testado com o MariaDB do XAMPP |
 | Git | qualquer | Para clonar o repositório |
 | Navegador | atual | Com acesso à internet: o Tabler e o Chart.js são carregados via CDN |
 
@@ -114,7 +114,7 @@ composer -V                             # deve mostrar Composer 2.x
 No `cmd` ou PowerShell do Windows, onde não há `grep`, rode apenas `php -m` e procure as duas extensões na lista.
 
 O MySQL 8.0 pode ser instalado pelo [instalador oficial](https://dev.mysql.com/downloads/mysql/8.0.html)
-(Windows e macOS). O XAMPP traz MariaDB, e não MySQL; o projeto foi desenvolvido e testado com MySQL 8.0.
+(Windows e macOS). O projeto foi desenvolvido com MySQL 8.0 e também testado com o MariaDB que acompanha o XAMPP.
 
 ---
 
@@ -129,7 +129,14 @@ cd portal-solicitacoes
 
 ### 2. Banco de dados
 
-Um único script cria o banco `portal_solicitacoes`, as tabelas, os dados de referência e os dados de demonstração:
+Antes de tudo, inicie o servidor de banco de dados de acordo com a opção escolhida anteriromente:
+
+- **XAMPP:** abra o **XAMPP Control Panel** e clique em **Start** na linha **MySQL** (ela deve ficar verde).
+- **MySQL instalado avulso (Windows):** o serviço costuma iniciar com o Windows. Se não estiver rodando,
+  tecle `Win+R`, digite `services.msc`, localize o serviço **MySQL80** e clique em **Iniciar**.
+- **macOS:** em **Ajustes do Sistema → MySQL**, clique em **Start MySQL Server**.
+
+Em seguida, um único script cria o banco `portal_solicitacoes`, as tabelas, os dados de referência e os dados de demonstração:
 
 ```bash
 mysql -u root -p --default-character-set=utf8mb4 < database/setup.sql
@@ -149,6 +156,7 @@ Os scripts individuais ficam em `database/migrations` (estrutura e dados essenci
 ### 3. Backend
 
 ```bash
+# Na pasta portal-solicitacoes:
 cd backend
 composer install
 cp .env.example .env
@@ -184,6 +192,9 @@ Variáveis do arquivo `backend/.env`:
 ---
 
 ## Execução
+
+> O MySQL precisa estar em execução (veja o passo 2 da Instalação). Se o login mostrar
+> `SQLSTATE[HY000] [2002]`, o banco está parado ou em uma porta diferente da configurada no `.env`.
 
 Dentro de `backend/`:
 
