@@ -108,3 +108,16 @@ body.carregando .page {
 .login-page {
     min-height: 100vh;
 }
+
+/*
+ * Campos de texto longos: o usuário pode aumentar a altura, mas não deixá-la menor que o tamanho inicial.
+ * Altura = linhas × altura da linha (lh) + espaçamento interno (2 × 0,5625rem) + bordas (2 × 1px).
+ * O seletor repete "textarea.form-control" para ter prioridade sobre a altura mínima padrão do Bootstrap.
+ */
+textarea.form-control.textarea-6-linhas {
+    min-height: calc(6lh + 1.125rem + 2px);
+}
+
+textarea.form-control.textarea-3-linhas {
+    min-height: calc(3lh + 1.125rem + 2px);
+}
