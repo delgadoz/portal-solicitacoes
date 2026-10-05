@@ -17,7 +17,7 @@ Desenvolvido como mini-projeto Full Stack para o processo seletivo de Desenvolve
 
 ## Funcionalidades
 
-- Login com sessão segura, logout e expiração por inatividade
+- Login com sessão segura, logout e expiração por inatividade(tempo ajustável nas variaveis de ambiente)
 - Bloqueio temporário após tentativas de login falhas (rate limiting) e registro de todas as tentativas
 - Alteração da própria senha (menu do usuário), com política de senha forte e novo login obrigatório em seguida
 - Controle de acesso por perfil:
@@ -40,8 +40,81 @@ Desenvolvido como mini-projeto Full Stack para o processo seletivo de Desenvolve
 | Git | qualquer | Para clonar o repositório |
 | Navegador | atual | Com acesso à internet: o Tabler e o Chart.js são carregados via CDN |
 
-Dependências do PHP (instaladas pelo Composer): `vlucas/phpdotenv`; em desenvolvimento, `phpunit/phpunit` e
-`squizlabs/php_codesniffer`.
+Dependências do PHP (instaladas pelo Composer): `vlucas/phpdotenv`; em desenvolvimento, `squizlabs/php_codesniffer`
+(verificação do padrão de código).
+
+### Instalando o PHP e o Composer
+
+Se `php -v` e `composer -V` já respondem no terminal (com PHP 8.2 ou superior), pule esta seção.
+
+<details>
+<summary><b>Windows</b></summary>
+
+**1. PHP** — escolha uma das opções:
+
+- **Opção A — XAMPP:** instale o [XAMPP](https://www.apachefriends.org/) com PHP 8.2 ou superior. O PHP fica em
+  `C:\xampp\php`, já com as extensões necessárias ativas.
+- **Opção B — PHP avulso:**
+  1. Em [windows.php.net/download](https://windows.php.net/download/), baixe o **Zip** da versão 8.2 ou superior,
+     **x64 Thread Safe**, e extraia em `C:\php`.
+  2. Na pasta `C:\php`, copie `php.ini-development` para `php.ini`.
+  3. Abra o `php.ini` e remova o `;` do início destas linhas:
+     ```ini
+     extension_dir = "ext"
+     extension=mbstring
+     extension=openssl
+     extension=pdo_mysql
+     extension=zip
+     ```
+  Se, ao rodar `php -v`, o Windows acusar falta de `VCRUNTIME140.dll`, instale o **Visual C++ Redistributable**
+  (x64), indicado na própria página de download do PHP.
+
+**2. PATH** — para o comando `php` funcionar em qualquer pasta, adicione a pasta do PHP (`C:\xampp\php` ou
+`C:\php`) à variável de ambiente `Path`: menu Iniciar → "Editar as variáveis de ambiente do sistema" →
+**Variáveis de Ambiente** → em *Variáveis do usuário*, selecione `Path` → **Editar** → **Novo** → informe a pasta →
+**OK**.
+
+**3. Composer** — baixe e execute o **Composer-Setup.exe** em
+[getcomposer.org/download](https://getcomposer.org/download/). Quando o instalador pedir, aponte para o
+`php.exe` (`C:\xampp\php\php.exe` ou `C:\php\php.exe`); ele adiciona o `composer` ao `Path` automaticamente.
+Feche e abra o terminal para surtir efeito.
+
+</details>
+
+<details>
+<summary><b>macOS</b></summary>
+
+**1. Homebrew** — se ainda não tiver o gerenciador de pacotes [Homebrew](https://brew.sh/), instale no Terminal:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+Ao final, execute os comandos que o instalador mostrar em *Next steps* (eles adicionam o `brew` ao `PATH`).
+
+**2. PHP e Composer:**
+
+```bash
+brew install php
+brew install composer
+```
+
+O PHP do Homebrew já inclui as extensões `pdo_mysql` e `mbstring`.
+
+</details>
+
+**Conferindo a instalação** (em qualquer sistema):
+
+```bash
+php -v                                  # deve mostrar 8.2 ou superior
+php -m | grep -iE "pdo_mysql|mbstring"  # deve listar as duas extensões
+composer -V                             # deve mostrar Composer 2.x
+```
+
+No `cmd` ou PowerShell do Windows, onde não há `grep`, rode apenas `php -m` e procure as duas extensões na lista.
+
+O MySQL 8.0 pode ser instalado pelo [instalador oficial](https://dev.mysql.com/downloads/mysql/8.0.html)
+(Windows e macOS). O XAMPP traz MariaDB, e não MySQL; o projeto foi desenvolvido e testado com MySQL 8.0.
 
 ---
 
